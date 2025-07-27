@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import { setupServer } from './server.js';
 import { initMongoConnection } from './db/initMongoConnection.js';
-import { Contact } from './models/Contact.js'; // 👈 импорт модели контактов
+import { Contact } from './models/сontact.js'; // 👈 импорт модели контактов
 
 config();
 
