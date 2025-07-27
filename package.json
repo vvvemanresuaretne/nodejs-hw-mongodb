@@ -1,0 +1,27 @@
+{
+  "name": "nodejs-hw-mongodb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src/**/*.js",
+    "start": "node ./src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "module",
+    "url": "git+https://github.com/vvvemanresuaretne/nodejs-hw-mongodb.git"
+  },
+  "keywords": [],
+  "author": "Vasylkovskyi Vladyslav <vvvasikovskyi@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vvvemanresuaretne/nodejs-hw-mongodb/issues"
+  },
+  "homepage": "https://github.com/vvvemanresuaretne/nodejs-hw-mongodb#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "pino-http": "^10.5.0"
+  }
+}
