@@ -1,4 +1,4 @@
-import { Contact } from '../models/contactes.js';
+import { Contact } from '../models/contacts';
 
 
 export const getAllContacts = async () => {
