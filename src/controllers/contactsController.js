@@ -1,6 +1,6 @@
 import { getAllContacts, getContactById } from '../services/contacts.js';
 
-export const getContacts = async (req, res) => {
+export const getContacts = async (req, res, next) => {
   try {
     const contacts = await getAllContacts();
     res.status(200).json({
@@ -9,21 +9,21 @@ export const getContacts = async (req, res) => {
       data: contacts,
     });
   } catch (error) {
-    res.status(500).json({
-      status: 500,
-      message: 'Error retrieving contacts',
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-export const getContact = async (req, res) => {
+export const getContact = async (req, res, next) => {
   try {
     const { contactId } = req.params;
     const contact = await getContactById(contactId);
 
     if (!contact) {
-      return res.status(404).json({ message: 'Contact not found' });
+      return res.status(404).json({
+        status: 404,
+        message: 'Contact not found',
+        data: null,
+      });
     }
 
     res.status(200).json({
@@ -32,10 +32,6 @@ export const getContact = async (req, res) => {
       data: contact,
     });
   } catch (error) {
-    res.status(500).json({
-      status: 500,
-      message: 'Error retrieving contact',
-      error: error.message,
-    });
+    next(error);
   }
 };
