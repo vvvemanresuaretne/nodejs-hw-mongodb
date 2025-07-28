@@ -1,10 +1,18 @@
-// src/middlewares/errorHandler.js
+import createHttpError from 'http-errors';
 
 export function errorHandler(err, req, res, next) {
-  const status = err.status || 500;
-  res.status(status).json({
-    status,
-    message: "Something went wrong",
+  if (createHttpError.isHttpError(err)) {
+    const status = err.status || 500;
+    res.status(status).json({
+      status,
+      message: err.message || err.name,
+      data: err,
+    });
+    return;
+  }
+  res.status(500).json({
+    status: 500,
+    message: 'Something went wrong',
     data: err.message,
   });
 }

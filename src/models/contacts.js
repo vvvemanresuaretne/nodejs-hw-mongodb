@@ -10,9 +10,7 @@ const contactSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-    },
+    email: String,
     isFavourite: {
       type: Boolean,
       default: false,
@@ -25,7 +23,8 @@ const contactSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // 👈 Автоматично додає createdAt і updatedAt
+    timestamps: true,
+    versionKey: false,  
   }
 );
 
