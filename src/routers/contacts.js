@@ -3,14 +3,14 @@ import validateBody from '../middlewares/validateBody.js';
 import isValidId from '../middlewares/isValidId.js';
 import authenticate from '../middlewares/authenticate.js';
 import { contactCreateSchema, contactUpdateSchema } from '../schemas/contactSchemas.js';
-import { addContact, patchContact } from '../controllers/contacts.js';
 import { getContacts, getContact } from '../controllers/contactsController.js';
-import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { addContact, patchContact } from '../controllers/contacts.js';
 import { removeContactById } from '../services/contacts.js';
+import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
 const router = express.Router();
 
-// Застосовуємо authenticate middleware до всіх роутів у цьому роутері
+// Применяем аутентификацию ко всем роутам этого маршрутизатора
 router.use(authenticate);
 
 router.get('/', ctrlWrapper(getContacts));

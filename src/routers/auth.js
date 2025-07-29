@@ -1,36 +1,56 @@
-// src/server.js
-
 import express from 'express';
-import cors from 'cors';
-import pino from 'pino-http';
-import cookieParser from 'cookie-parser';
+import { registerUser, loginUser, refreshSession, logoutUser } from '../services/auth.js';
 
-import contactsRouter from './routers/contacts.js';
-import authRouter from './routers/auth.js'; // подключаем роутер аутентификации
-import { errorHandler } from './middlewares/errorHandler.js';
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
+const router = express.Router();
 
-export function setupServer() {
-  const app = express();
+// Регистрация нового пользователя
+router.post('/register', async (req, res, next) => {
+  try {
+    const { name, email, password } = req.body;
+    const user = await registerUser({ name, email, password });
+    res.status(201).json(user);
+  } catch (error) {
+    next(error);
+  }
+});
 
-  // Middleware
-  app.use(cors());
-  app.use(pino());
-  app.use(express.json());
-  app.use(cookieParser()); // подключаем cookie-parser до роутов
+// Логин пользователя
+router.post('/login', async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const { accessToken, refreshToken, userId } = await loginUser({ email, password });
 
-  // Роуты
-  app.use('/contacts', contactsRouter);
-  app.use('/auth', authRouter); // регистрация маршрутов аутентификации
+    // Можно также установить токены в куки, если требуется, например:
+    // res.cookie('accessToken', accessToken, { httpOnly: true, maxAge: 15 * 60 * 1000 });
+    // res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 });
 
-  // Обработка несуществующих роутов – должна идти после всех app.use()
-  app.use(notFoundHandler);
+    res.json({ accessToken, refreshToken, userId });
+  } catch (error) {
+    next(error);
+  }
+});
 
-  // Централизованный обработчик ошибок (последний middleware)
-  app.use(errorHandler);
+// Обновление сессии (обновление токенов)
+router.post('/refresh', async (req, res, next) => {
+  try {
+    // Получаем refresh token из заголовков или тела запроса
+    const refreshToken = req.body.refreshToken || req.headers['x-refresh-token'] || req.cookies?.refreshToken;
+    const tokens = await refreshSession(refreshToken);
+    res.json(tokens);
+  } catch (error) {
+    next(error);
+  }
+});
 
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-}
+// Выход пользователя (удаление сессии)
+router.post('/logout', async (req, res, next) => {
+  try {
+    const { sessionId, refreshToken } = req.body;
+    await logoutUser({ sessionId, refreshToken });
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+export default router;
