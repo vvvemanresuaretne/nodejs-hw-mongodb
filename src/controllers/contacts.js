@@ -1,45 +1,49 @@
-import { Contact } from '../models/contacts.js'; 
 
-// Оновлення контакту по id
+import createError from 'http-errors';
+import * as contactsService from '../services/contacts.js';
+
+// Оновлення контакту по id з урахуванням userId
 export const patchContact = async (req, res, next) => {
   try {
+    const userId = req.user.id; // отримуємо userId з middleware authenticate
     const { contactId } = req.params;
     const updateData = req.body;
 
-    const updatedContact = await Contact.findByIdAndUpdate(contactId, updateData, {
-      new: true,      // щоб повернути вже оновлену версію документа
-      runValidators: true, // щоб запустити валідацію на оновлення
-    });
+    const updatedContact = await contactsService.updateContact(userId, contactId, updateData);
 
     if (!updatedContact) {
       return res.status(404).json({ message: 'Contact not found' });
     }
 
-    res.json(updatedContact);
+    res.json({
+      status: 'success',
+      data: updatedContact,
+    });
   } catch (error) {
-    next(error);  // передаємо помилку в error-handler
+    next(error);
   }
 };
 
 export async function addContact(req, res, next) {
   try {
-    const { name, phoneNumber, email, isFavourite = false, contactType } = req.body;
+    const userId = req.user.id;  // або req.user._id, як у вас прийнято
+    const contactData = req.body;
 
-    if (!name) {
+    // Валідація обов'язкових полів (можна винести в middleware)
+    if (!contactData.name) {
       throw createError(400, 'Missing required field: name');
     }
-    if (!phoneNumber) {
+    if (!contactData.phoneNumber) {
       throw createError(400, 'Missing required field: phoneNumber');
     }
-    if (!contactType) {
+    if (!contactData.contactType) {
       throw createError(400, 'Missing required field: contactType');
     }
 
-    const newContact = await createContact({ name, phoneNumber, email, isFavourite, contactType });
+    const newContact = await contactsService.addContact(userId, contactData);
 
- 
     res.status(201).json({
-      status: 201,
+      status: 'success',
       message: "Successfully created a contact!",
       data: newContact,
     });
@@ -47,5 +51,3 @@ export async function addContact(req, res, next) {
     next(error);
   }
 }
-
-
