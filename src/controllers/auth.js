@@ -13,7 +13,6 @@ export async function register(req, res, next) {
       message: 'User registered successfully',
       data: {
         user: {
-          id: newUser._id,
           email: newUser.email,
           name: newUser.name,
         },
@@ -42,7 +41,7 @@ export async function login(req, res, next) {
     res.status(200).json({
       status: 'success',
       message: 'Successfully logged in a user!',
-      data: { accessToken, userId },
+      data: { accessToken },
     });
   } catch (error) {
     next(error);
