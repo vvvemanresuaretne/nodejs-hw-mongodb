@@ -13,6 +13,7 @@ export async function register(req, res, next) {
       message: 'User registered successfully',
       data: {
         user: {
+          id: newUser._id,
           email: newUser.email,
           name: newUser.name,
         },
