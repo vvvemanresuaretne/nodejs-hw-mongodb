@@ -24,7 +24,7 @@ router.post('/login', async (req, res, next) => {
     // res.cookie('accessToken', accessToken, { httpOnly: true, maxAge: 15 * 60 * 1000 });
     // res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 });
 
-    res.json({ accessToken, refreshToken, userId });
+    res.json({ accessToken, refreshToken });
   } catch (error) {
     next(error);
   }
