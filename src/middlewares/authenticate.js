@@ -1,32 +1,48 @@
-import jwt from 'jsonwebtoken';
 import createHttpError from 'http-errors';
 
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'your-access-token-secret';
+import mongoose from 'mongoose';
+import  sessionSchema  from '../models/Session.js';
+import  userSchema  from '../models/User.js';
 
-export default function authenticate(req, res, next) {
-  const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return next(createHttpError(401, 'Missing or invalid Authorization header'));
-  }
 
-  const token = authHeader.split(' ')[1];
-
+export const authenticate = async (req, res, next) => {
   try {
-    // verify кидає помилку якщо токен невалідний або протермінований
-    const payload = jwt.verify(token, ACCESS_TOKEN_SECRET);
+    const authHeader = req.get('Authorization');
 
-    // Додавання інформації про користувача в req.user (наприклад, id)
-    req.user = { id: payload.id };
+    if (!authHeader) {
+      return next(createHttpError(401, 'Please provide Authorization header'));
+    }
 
-    next();
-  } catch (err) {
-    // Якщо причина помилки – протермінований токен
-    if (err.name === 'TokenExpiredError') {
+    const [bearer, token] = authHeader.split(' ');
+
+    if (bearer !== 'Bearer' || !token) {
+      return next(createHttpError(401, 'Auth header should be of type Bearer'));
+    }
+
+    const session = await Session.findOne({ accessToken: token });
+
+
+    if (!session) {
+      return next(createHttpError(401, 'Session not found'));
+    }
+
+    const now = new Date();
+    if (now > new Date(session.accessTokenValidUntil)) {
       return next(createHttpError(401, 'Access token expired'));
     }
 
-    // Усі інші помилки валідації токена, як недійсний чи відсутній
-    return next(createHttpError(401, 'Invalid access token'));
+    const user = await User.findById(session.userId);
+
+    if (!user) {
+      return next(createHttpError(401, 'User not found'));
+    }
+
+    // Добавляем пользователя к запросу
+    req.user = user;
+
+    next();
+  } catch (error) {
+    next(error);
   }
-}
+};
