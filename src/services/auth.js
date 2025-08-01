@@ -126,18 +126,18 @@ export async function refreshSession(refreshToken) {
 
   return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 }
-export async function logoutUser({ sessionId, refreshToken }) {
-  if (!sessionId) {
-    throw createHttpError(400, 'Session ID is required');
-  }
+// В сервисе (auth.js):
+
+export async function logoutUser({ refreshToken }) {
   if (!refreshToken) {
     throw createHttpError(401, 'Refresh token is missing');
   }
 
-  const session = await Session.findOne({ _id: sessionId, refreshToken });
+  // Находим сессию по refreshToken и удаляем её
+  const session = await Session.findOne({ refreshToken });
   if (!session) {
     throw createHttpError(401, 'Session not found or token is invalid');
   }
 
-  await Session.deleteOne({ _id: sessionId });
+  await Session.deleteOne({ _id: session._id });
 }

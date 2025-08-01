@@ -88,18 +88,13 @@ export async function refreshController(req, res, next) {
 
 export async function logoutController(req, res, next) {
   try {
-    const { sessionId } = req.body;
     const { refreshToken } = req.cookies;
-
-    if (!sessionId) {
-      throw createHttpError(400, 'Missing sessionId');
-    }
 
     if (!refreshToken) {
       throw createHttpError(401, 'Refresh token not provided');
     }
 
-    await authService.logoutUser({ sessionId, refreshToken });
+    await authService.logoutUser({ refreshToken });
 
     res.clearCookie('refreshToken', {
       httpOnly: true,

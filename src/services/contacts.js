@@ -1,21 +1,7 @@
 import { Contact } from '../models/contacts.js';
 
-
-/**
- * Отримання списку контактів з пагінацією, фільтрами, сортуванням,
- * без прив'язки до користувача.
- *
- * @param {Object} params - Параметри пошуку
- * @param {number} [params.page=1] - Номер сторінки
- * @param {number} [params.perPage=10] - Кількість контактів на сторінку
- * @param {string} [params.sortBy='name'] - Поле для сортування
- * @param {string} [params.sortOrder='asc'] - Напрям сортування ('asc' або 'desc')
- * @param {string} [params.type] - Фільтр за contactType
- * @param {boolean|string} [params.isFavourite] - Фільтр за обраними
- * @returns {Object} Дані з контактами та пагінацією
- */
 export async function getAllContacts({
-  userId,    // добавлено
+  userId,
   page = 1,
   perPage = 10,
   sortBy = 'name',
@@ -28,9 +14,8 @@ export async function getAllContacts({
 
   const skip = (page - 1) * perPage;
 
-  // Фильтр теперь включает userId
   const filter = {
-    userId,  // обязательно учитываем userId
+    userId,  // фильтруем по userId
   };
 
   if (type) {
@@ -71,75 +56,52 @@ export async function getAllContacts({
   };
 }
 
-
-  // Сортування
-  const sortableFields = ['name'];
-  const sortField = sortableFields.includes(sortBy) ? sortBy : 'name';
-  const sortDirection = sortOrder === 'desc' ? -1 : 1;
-  const sortOption = { [sortField]: sortDirection };
-
-  const [totalItems, contacts] = await Promise.all([
-    Contact.countDocuments(filter),
-    Contact.find(filter)
-      .skip(skip)
-      .limit(perPage)
-      .sort(sortOption),
-  ]);
-
-  const totalPages = Math.ceil(totalItems / perPage);
-
-  return {
-    data: contacts,
-    page,
-    perPage,
-    totalItems,
-    totalPages,
-    hasPreviousPage: page > 1,
-    hasNextPage: page < totalPages,
-  };
+/**
+ * Создание нового контакта с привязкой к пользователю
+ *
+ * @param {string} userId - ID пользователя
+ * @param {Object} contactData - Данные контакта
+ * @returns {Promise<Object>} - Новый контакт
+ */
+export async function addContact(userId, contactData) {
+  const contactWithUser = { ...contactData, userId };
+  return Contact.create(contactWithUser);
 }
 
-
 /**
- * Створення нового контакту без прив'язки до користувача
+ * Получение контакта по ID с проверкой принадлежности пользователю
  *
- * @param {Object} contactData - Дані контакту
- * @returns {Promise<Object>} - Новий контакт
+ * @param {string} userId - ID пользователя
+ * @param {string} contactId - ID контакта
+ * @returns {Promise<Object|null>} - Найденный контакт или null
  */
-export async function addContact(contactData) {
-  return Contact.create(contactData);
+export async function getContactById(userId, contactId) {
+  return Contact.findOne({ _id: contactId, userId });
 }
 
-
 /**
- * Отримання контакту за ID без прив'язки до користувача
+ * Обновление контакта по ID с проверкой принадлежности пользователю
  *
- * @param {string} contactId - ID контакту
- * @returns {Promise<Object|null>} - Знайдений контакт або null
+ * @param {string} userId - ID пользователя
+ * @param {string} contactId - ID контакта
+ * @param {Object} updateData - Данные для обновления
+ * @returns {Promise<Object|null>} - Обновлённый контакт или null
  */
-export async function getContactById(contactId) {
-  return Contact.findById(contactId);
+export async function updateContact(userId, contactId, updateData) {
+  return Contact.findOneAndUpdate(
+    { _id: contactId, userId },
+    updateData,
+    { new: true, runValidators: true }
+  );
 }
 
-
 /**
- * Оновлення контакту за ID без прив'язки до користувача
+ * Удаление контакта по ID с проверкой принадлежности пользователю
  *
- * @param {string} contactId - ID контакту
- * @param {Object} updateData - Дані для оновлення
- * @returns {Promise<Object|null>} - Оновлений контакт або null
+ * @param {string} userId - ID пользователя
+ * @param {string} contactId - ID контакта
+ * @returns {Promise<Object|null>} - Удалённый контакт или null
  */
-export async function updateContact(contactId, updateData) {
-  return Contact.findByIdAndUpdate(contactId, updateData, { new: true, runValidators: true });
-}
-
-
-/**
- * Видалення контакту за ID без прив'язки до користувача
- *
- * @param {string} contactId - ID контакту
- * @returns {Promise<Object|null>} - Видалений контакт або null
- */
-export async function removeContactById(contactId) {
-  return Contact.findByIdAndDelete(contactId);
+export async function removeContactById(userId, contactId) {
+  return Contact.findOneAndDelete({ _id: contactId, userId });
 }

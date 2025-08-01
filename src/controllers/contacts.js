@@ -1,14 +1,14 @@
-
 import createError from 'http-errors';
 import * as contactsService from '../services/contacts.js';
 
-// Оновлення контакту по id з урахуванням userId
+// Обновление контакта по id с учётом userId
 export const patchContact = async (req, res, next) => {
   try {
-    const userId = req.user.id; // отримуємо userId з middleware authenticate
+    const userId = req.user.id; // получаем userId из middleware authenticate
     const { contactId } = req.params;
     const updateData = req.body;
 
+    // Передаем userId первым параметром
     const updatedContact = await contactsService.updateContact(userId, contactId, updateData);
 
     if (!updatedContact) {
@@ -24,12 +24,13 @@ export const patchContact = async (req, res, next) => {
   }
 };
 
+// Создание контакта с привязкой к userId
 export async function addContact(req, res, next) {
   try {
-    const userId = req.user.id;  // або req.user._id, як у вас прийнято
+    const userId = req.user.id; // или req.user._id, как у вас принято
     const contactData = req.body;
 
-    // Валідація обов'язкових полів (можна винести в middleware)
+    // Валидация обязательных полей (можно вынести в middleware)
     if (!contactData.name) {
       throw createError(400, 'Missing required field: name');
     }
@@ -40,11 +41,12 @@ export async function addContact(req, res, next) {
       throw createError(400, 'Missing required field: contactType');
     }
 
+    // Передаем userId первым параметром
     const newContact = await contactsService.addContact(userId, contactData);
 
     res.status(201).json({
       status: 'success',
-      message: "Successfully created a contact!",
+      message: 'Successfully created a contact!',
       data: newContact,
     });
   } catch (error) {
