@@ -1,8 +1,9 @@
 import createHttpError from 'http-errors';
 
 import mongoose from 'mongoose';
-import  sessionSchema  from '../models/Session.js';
-import  userSchema  from '../models/User.js';
+
+import  Session  from '../models/Session.js';
+import  User  from '../models/User.js';
 
 
 
