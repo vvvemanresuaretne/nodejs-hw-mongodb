@@ -15,6 +15,7 @@ import { Contact } from '../models/contacts.js';
  * @returns {Object} Дані з контактами та пагінацією
  */
 export async function getAllContacts({
+  userId,    // добавлено
   page = 1,
   perPage = 10,
   sortBy = 'name',
@@ -27,8 +28,10 @@ export async function getAllContacts({
 
   const skip = (page - 1) * perPage;
 
-  // Фільтр без userId
-  const filter = {};
+  // Фильтр теперь включает userId
+  const filter = {
+    userId,  // обязательно учитываем userId
+  };
 
   if (type) {
     filter.contactType = type;
@@ -41,6 +44,33 @@ export async function getAllContacts({
       filter.isFavourite = Boolean(isFavourite);
     }
   }
+
+  const sortableFields = ['name'];
+  const sortField = sortableFields.includes(sortBy) ? sortBy : 'name';
+  const sortDirection = sortOrder === 'desc' ? -1 : 1;
+  const sortOption = { [sortField]: sortDirection };
+
+  const [totalItems, contacts] = await Promise.all([
+    Contact.countDocuments(filter),
+    Contact.find(filter)
+      .skip(skip)
+      .limit(perPage)
+      .sort(sortOption),
+  ]);
+
+  const totalPages = Math.ceil(totalItems / perPage);
+
+  return {
+    data: contacts,
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    hasPreviousPage: page > 1,
+    hasNextPage: page < totalPages,
+  };
+}
+
 
   // Сортування
   const sortableFields = ['name'];
