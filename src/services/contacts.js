@@ -1,11 +1,11 @@
 import { Contact } from '../models/contacts.js';
 
+
 /**
  * Отримання списку контактів з пагінацією, фільтрами, сортуванням,
- * тільки для конкретного користувача.
+ * без прив'язки до користувача.
  *
  * @param {Object} params - Параметри пошуку
- * @param {string} params.userId - ID користувача (обов'язково)
  * @param {number} [params.page=1] - Номер сторінки
  * @param {number} [params.perPage=10] - Кількість контактів на сторінку
  * @param {string} [params.sortBy='name'] - Поле для сортування
@@ -15,7 +15,6 @@ import { Contact } from '../models/contacts.js';
  * @returns {Object} Дані з контактами та пагінацією
  */
 export async function getAllContacts({
-  userId,
   page = 1,
   perPage = 10,
   sortBy = 'name',
@@ -23,17 +22,13 @@ export async function getAllContacts({
   type,
   isFavourite,
 }) {
-  if (!userId) {
-    throw new Error('userId is required');
-  }
-
   page = Number(page) < 1 ? 1 : Number(page);
   perPage = Number(perPage) < 1 ? 10 : Number(perPage);
 
   const skip = (page - 1) * perPage;
 
-  // Фільтр по userId + додаткові фільтри
-  const filter = { userId };
+  // Фільтр без userId
+  const filter = {};
 
   if (type) {
     filter.contactType = type;
@@ -74,63 +69,47 @@ export async function getAllContacts({
   };
 }
 
+
 /**
- * Створення нового контакту з прив'язкою до користувача
+ * Створення нового контакту без прив'язки до користувача
  *
- * @param {string} userId - ID користувача
  * @param {Object} contactData - Дані контакту
  * @returns {Promise<Object>} - Новий контакт
  */
-export async function addContact(userId, contactData) {
-  if (!userId) {
-    throw new Error('userId is required');
-  }
-  return Contact.create({ ...contactData, userId });
+export async function addContact(contactData) {
+  return Contact.create(contactData);
 }
 
+
 /**
- * Отримання контакту за ID для конкретного користувача
+ * Отримання контакту за ID без прив'язки до користувача
  *
- * @param {string} userId - ID користувача
  * @param {string} contactId - ID контакту
  * @returns {Promise<Object|null>} - Знайдений контакт або null
  */
-export async function getContactById(userId, contactId) {
-  if (!userId) {
-    throw new Error('userId is required');
-  }
-  return Contact.findOne({ _id: contactId, userId });
+export async function getContactById(contactId) {
+  return Contact.findById(contactId);
 }
 
+
 /**
- * Оновлення контакту за ID для конкретного користувача
+ * Оновлення контакту за ID без прив'язки до користувача
  *
- * @param {string} userId - ID користувача
  * @param {string} contactId - ID контакту
  * @param {Object} updateData - Дані для оновлення
  * @returns {Promise<Object|null>} - Оновлений контакт або null
  */
-export async function updateContact(userId, contactId, updateData) {
-  if (!userId) {
-    throw new Error('userId is required');
-  }
-  return Contact.findOneAndUpdate(
-    { _id: contactId, userId },
-    updateData,
-    { new: true, runValidators: true }
-  );
+export async function updateContact(contactId, updateData) {
+  return Contact.findByIdAndUpdate(contactId, updateData, { new: true, runValidators: true });
 }
 
+
 /**
- * Видалення контакту за ID для конкретного користувача
+ * Видалення контакту за ID без прив'язки до користувача
  *
- * @param {string} userId - ID користувача
  * @param {string} contactId - ID контакту
  * @returns {Promise<Object|null>} - Видалений контакт або null
  */
-export async function removeContactById(userId, contactId) {
-  if (!userId) {
-    throw new Error('userId is required');
-  }
-  return Contact.findOneAndDelete({ _id: contactId, userId });
+export async function removeContactById(contactId) {
+  return Contact.findByIdAndDelete(contactId);
 }
