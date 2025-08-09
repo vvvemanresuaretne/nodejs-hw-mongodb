@@ -5,7 +5,7 @@ import User from '../models/User.js';
 import Session from '../models/Session.js';
 import { SMTP } from '../constants/index.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
-import { sendEmail } from '../utils/sendMail.js';
+import { sendMail } from '../utils/sendMail.js';
 import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
