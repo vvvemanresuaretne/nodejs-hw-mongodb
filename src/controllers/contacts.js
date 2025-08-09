@@ -1,6 +1,8 @@
 import createError from 'http-errors';
 import * as contactsService from '../services/contacts.js';
 import cloudinary from '../config/cloudinary.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
 // Функция для загрузки фото в Cloudinary из буфера (чтобы работать с memoryStorage multer)
 const uploadFromBuffer = (buffer) =>
@@ -15,19 +17,34 @@ const uploadFromBuffer = (buffer) =>
     stream.end(buffer);
   });
 
-// Обновление контакта по id с учётом userId + загрузка фото
 export const patchContact = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const { contactId } = req.params;
-    const updateData = { ...req.body };
+    const photo = req.file;
 
-    // Если есть новый файл, загружаем его в Cloudinary и подставляем URL
-    if (req.file) {
-      const uploadResult = await uploadFromBuffer(req.file.buffer);
-      updateData.photo = uploadResult.secure_url;
+    let photoUrl;
+
+    // Если есть файл — обрабатываем по логике как у patchStudentController
+    if (photo) {
+      if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+        photoUrl = await saveFileToCloudinary(photo); // загрузка в Cloudinary
+      } else {
+        photoUrl = await saveFileToUploadDir(photo); // сохранение локально
+      }
     }
 
+    // Собираем данные для обновления
+    const updateData = {
+      ...req.body,
+    };
+
+    // Фото добавляем только если загружено
+    if (photoUrl) {
+      updateData.photo = photoUrl;
+    }
+
+    // Обновляем контакт с учётом userId
     const updatedContact = await contactsService.updateContact(
       userId,
       contactId,
@@ -35,11 +52,12 @@ export const patchContact = async (req, res, next) => {
     );
 
     if (!updatedContact) {
-      return res.status(404).json({ message: 'Contact not found' });
+      return next(createHttpError(404, 'Contact not found'));
     }
 
     res.json({
-      status: 'success',
+      status: 200,
+      message: 'Successfully patched a contact!',
       data: updatedContact,
     });
   } catch (error) {
