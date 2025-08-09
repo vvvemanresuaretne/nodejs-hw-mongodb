@@ -1,38 +1,42 @@
 import express from 'express';
-import { registerController, loginController, refreshController, logoutController } from '../controllers/auth.js';
-import { requestResetEmailSchema } from '../schemas/resetEmail.js';
-import { requestResetEmailController } from '../controllers/auth.js';
-import { resetPasswordSchema } from '../schemas/resetEmail.js';
-import { resetPasswordController } from '../controllers/auth.js';
+import {
+  registerController,
+  loginController,
+  refreshController,
+  logoutController,
+  requestResetEmailController,
+} from '../controllers/auth.js';
 import { validateBody } from '../utils/validateBody.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { requestResetEmailSchema, resetPasswordSchema } from '../schemas/resetEmail.js';
+import { resetPasswordController } from '../controllers/resetPassword.js'; // вынесли в отдельный файл
 
 const router = express.Router();
 
 // Регистрация нового пользователя
-router.post('/register', registerController);
+router.post('/register', ctrlWrapper(registerController));
 
 // Логин пользователя
-router.post('/login', loginController);
+router.post('/login', ctrlWrapper(loginController));
 
-// Обновление сессии (обновление токенов)
-router.post('/refresh', refreshController);
+// Обновление токена
+router.post('/refresh', ctrlWrapper(refreshController));
 
-// Выход пользователя (удаление сессии)
-router.post('/logout', logoutController);
+// Выход пользователя
+router.post('/logout', ctrlWrapper(logoutController));
 
-// Сброс e-mail
+// Запрос ссылки на сброс пароля
 router.post(
   '/request-reset-email',
   validateBody(requestResetEmailSchema),
-  ctrlWrapper(requestResetEmailController),
+  ctrlWrapper(requestResetEmailController)
 );
 
-// Сброс Пароля
+// Сброс пароля по JWT-токену
 router.post(
   '/reset-password',
   validateBody(resetPasswordSchema),
-  ctrlWrapper(resetPasswordController),
+  ctrlWrapper(resetPasswordController) // логика с ТЗ будет внутри
 );
 
 export default router;

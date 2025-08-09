@@ -1,15 +1,38 @@
 import createError from 'http-errors';
 import * as contactsService from '../services/contacts.js';
+import cloudinary from '../config/cloudinary.js';
 
-// Обновление контакта по id с учётом userId
+// Функция для загрузки фото в Cloudinary из буфера (чтобы работать с memoryStorage multer)
+const uploadFromBuffer = (buffer) =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'contacts' }, // фото будут храниться в папке contacts
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      }
+    );
+    stream.end(buffer);
+  });
+
+// Обновление контакта по id с учётом userId + загрузка фото
 export const patchContact = async (req, res, next) => {
   try {
-    const userId = req.user.id; // получаем userId из middleware authenticate
+    const userId = req.user.id;
     const { contactId } = req.params;
-    const updateData = req.body;
+    const updateData = { ...req.body };
 
-    // Передаем userId первым параметром
-    const updatedContact = await contactsService.updateContact(userId, contactId, updateData);
+    // Если есть новый файл, загружаем его в Cloudinary и подставляем URL
+    if (req.file) {
+      const uploadResult = await uploadFromBuffer(req.file.buffer);
+      updateData.photo = uploadResult.secure_url;
+    }
+
+    const updatedContact = await contactsService.updateContact(
+      userId,
+      contactId,
+      updateData
+    );
 
     if (!updatedContact) {
       return res.status(404).json({ message: 'Contact not found' });
@@ -24,13 +47,19 @@ export const patchContact = async (req, res, next) => {
   }
 };
 
-// Создание контакта с привязкой к userId
+// Создание контакта с привязкой к userId + загрузка фото
 export async function addContact(req, res, next) {
   try {
-    const userId = req.user.id; // или req.user._id, как у вас принято
-    const contactData = req.body;
+    const userId = req.user.id;
+    const contactData = { ...req.body };
 
-    // Валидация обязательных полей (можно вынести в middleware)
+    // Если фото пришло как файл — загружаем в Cloudinary
+    if (req.file) {
+      const uploadResult = await uploadFromBuffer(req.file.buffer);
+      contactData.photo = uploadResult.secure_url;
+    }
+
+    // Валидация обязательных полей (лучше в отдельный middleware с Joi)
     if (!contactData.name) {
       throw createError(400, 'Missing required field: name');
     }
@@ -41,7 +70,6 @@ export async function addContact(req, res, next) {
       throw createError(400, 'Missing required field: contactType');
     }
 
-    // Передаем userId первым параметром
     const newContact = await contactsService.addContact(userId, contactData);
 
     res.status(201).json({

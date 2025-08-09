@@ -1,6 +1,5 @@
-import * as authService from '../services/auth.js';
 import createHttpError from 'http-errors';
-import { resetPassword } from '../services/auth.js';
+import * as authService from '../services/auth.js';
 
 export async function registerController(req, res, next) {
   try {
@@ -22,7 +21,6 @@ export async function registerController(req, res, next) {
       },
     });
   } catch (error) {
-    // Если ошибка с email уже существует, сервис должен выбросить createHttpError с 409
     next(error);
   }
 }
@@ -35,24 +33,21 @@ export async function loginController(req, res, next) {
       throw createHttpError(400, 'Missing required fields: email or password');
     }
 
-    // Попытка залогинить пользователя и создать новую сессию
     const { accessToken, refreshToken } = await authService.loginUser({ email, password }, {
       accessTokenExpiresIn: '15m',
       refreshTokenExpiresIn: '30d',
     });
 
-    // Устанавливаем refreshToken в куки (HttpOnly, secure)
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней в миллисекундах
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
     });
 
-    // Отправляем accessToken в теле ответа
     res.status(200).json({
       status: 'success',
-      message: 'Successfully logged in an user!',
+      message: 'Successfully logged in a user!',
       data: { accessToken },
     });
   } catch (error) {
@@ -108,22 +103,29 @@ export async function logoutController(req, res, next) {
     next(error);
   }
 }
-import { requestResetToken } from '../services/auth.js';
 
-export const requestResetEmailController = async (req, res) => {
-  await requestResetToken(req.body.email);
-  res.json({
-    message: 'Reset password email was successfully sent!',
-    status: 200,
-    data: {},
-  });
+export const requestResetEmailController = async (req, res, next) => {
+  try {
+    await authService.requestResetToken(req.body.email);
+    res.status(200).json({
+      status: 200,
+      message: 'Reset password email was successfully sent!',
+      data: {},
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const resetPasswordController = async (req, res) => {
-  await resetPassword(req.body);
-  res.json({
-    message: 'Password was successfully reset!',
-    status: 200,
-    data: {},
-  });
+export const resetPasswordController = async (req, res, next) => {
+  try {
+    await authService.resetPassword(req.body);
+    res.status(200).json({
+      status: 200,
+      message: 'Password was successfully reset!',
+      data: {},
+    });
+  } catch (error) {
+    next(error);
+  }
 };
