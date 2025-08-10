@@ -26,11 +26,17 @@ router.post('/refresh', ctrlWrapper(refreshController));
 router.post('/logout', ctrlWrapper(logoutController));
 
 // Запрос ссылки на сброс пароля
+
 router.post(
-  '/request-reset-email',
+  '/send-reset-email',
   validateBody(requestResetEmailSchema),
   ctrlWrapper(requestResetEmailController)
 );
+
+router.post('/test', (req, res) => {
+  res.json({ message: 'POST /auth/test works' });
+});
+
 
 // Сброс пароля по JWT-токену
 router.post(

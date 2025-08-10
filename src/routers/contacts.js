@@ -1,5 +1,6 @@
 import express from 'express';
-import validateBody from '../middlewares/validateBody.js';
+import { validateBody } from '../middlewares/validateBody.js';
+
 import isValidId from '../middlewares/isValidId.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { contactCreateSchema, contactUpdateSchema } from '../schemas/contactSchemas.js';
