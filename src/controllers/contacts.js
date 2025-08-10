@@ -1,17 +1,19 @@
 import createError from 'http-errors';
 import * as contactsService from '../services/contacts.js';
 import cloudinary from '../config/cloudinary.js';
-import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 
-// Функция для загрузки фото в Cloudinary из буфера (чтобы работать с memoryStorage multer)
 const uploadFromBuffer = (buffer) =>
   new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: 'contacts' }, // фото будут храниться в папке contacts
+      { folder: 'contacts', resource_type: 'image' },
       (error, result) => {
-        if (result) resolve(result);
-        else reject(error);
+        if (error) {
+          console.error('Cloudinary upload error:', error);
+          reject(error);
+        } else {
+          resolve(result);
+        }
       }
     );
     stream.end(buffer);
@@ -21,38 +23,33 @@ export const patchContact = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const { contactId } = req.params;
-    const photo = req.file;
 
     let photoUrl;
 
-    // Если есть файл — обрабатываем по логике как у patchStudentController
-    if (photo) {
+    if (req.file && req.file.buffer) {
       if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
-        photoUrl = await saveFileToCloudinary(photo); // загрузка в Cloudinary
+        try {
+          const uploadResult = await uploadFromBuffer(req.file.buffer);
+          photoUrl = uploadResult.secure_url;
+          console.log('Image uploaded to Cloudinary:', photoUrl);
+        } catch (error) {
+          return next(createError(500, 'Failed to upload image: ' + error.message));
+        }
       } else {
-        photoUrl = await saveFileToUploadDir(photo); // сохранение локально
+        // Подключи saveFileToUploadDir если нужна локальная загрузка
+        // photoUrl = await saveFileToUploadDir(req.file);
       }
     }
 
-    // Собираем данные для обновления
-    const updateData = {
-      ...req.body,
-    };
-
-    // Фото добавляем только если загружено
+    const updateData = { ...req.body };
     if (photoUrl) {
       updateData.photo = photoUrl;
     }
 
-    // Обновляем контакт с учётом userId
-    const updatedContact = await contactsService.updateContact(
-      userId,
-      contactId,
-      updateData
-    );
+    const updatedContact = await contactsService.updateContact(userId, contactId, updateData);
 
     if (!updatedContact) {
-      return next(createHttpError(404, 'Contact not found'));
+      return next(createError(404, 'Contact not found'));
     }
 
     res.json({
@@ -65,19 +62,21 @@ export const patchContact = async (req, res, next) => {
   }
 };
 
-// Создание контакта с привязкой к userId + загрузка фото
 export async function addContact(req, res, next) {
   try {
     const userId = req.user.id;
     const contactData = { ...req.body };
 
-    // Если фото пришло как файл — загружаем в Cloudinary
-    if (req.file) {
-      const uploadResult = await uploadFromBuffer(req.file.buffer);
-      contactData.photo = uploadResult.secure_url;
+    if (req.file && req.file.buffer) {
+      try {
+        const uploadResult = await uploadFromBuffer(req.file.buffer);
+        contactData.photo = uploadResult.secure_url;
+        console.log('Image uploaded to Cloudinary for new contact:', contactData.photo);
+      } catch (error) {
+        return next(createError(500, 'Failed to upload image: ' + error.message));
+      }
     }
 
-    // Валидация обязательных полей (лучше в отдельный middleware с Joi)
     if (!contactData.name) {
       throw createError(400, 'Missing required field: name');
     }

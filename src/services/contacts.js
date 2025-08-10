@@ -1,4 +1,5 @@
 import { Contact } from '../models/contacts.js';
+import mongoose from 'mongoose';
 
 export async function getAllContacts({
   userId,
@@ -14,33 +15,25 @@ export async function getAllContacts({
 
   const skip = (page - 1) * perPage;
 
-  const filter = {
-    userId,  // фильтруем по userId
-  };
+  const filter = { userId };
 
-  if (type) {
-    filter.contactType = type;
-  }
+  if (type) filter.contactType = type;
 
   if (typeof isFavourite !== 'undefined') {
-    if (typeof isFavourite === 'string') {
-      filter.isFavourite = isFavourite.toLowerCase() === 'true';
-    } else {
-      filter.isFavourite = Boolean(isFavourite);
-    }
+    filter.isFavourite = typeof isFavourite === 'string'
+      ? isFavourite.toLowerCase() === 'true'
+      : Boolean(isFavourite);
   }
 
-  const sortableFields = ['name'];
+  // поля, по которым можно сортировать
+  const sortableFields = ['name', 'createdAt', 'updatedAt'];
   const sortField = sortableFields.includes(sortBy) ? sortBy : 'name';
   const sortDirection = sortOrder === 'desc' ? -1 : 1;
   const sortOption = { [sortField]: sortDirection };
 
   const [totalItems, contacts] = await Promise.all([
     Contact.countDocuments(filter),
-    Contact.find(filter)
-      .skip(skip)
-      .limit(perPage)
-      .sort(sortOption),
+    Contact.find(filter).skip(skip).limit(perPage).sort(sortOption),
   ]);
 
   const totalPages = Math.ceil(totalItems / perPage);
@@ -56,52 +49,41 @@ export async function getAllContacts({
   };
 }
 
-/**
- * Создание нового контакта с привязкой к пользователю
- *
- * @param {string} userId - ID пользователя
- * @param {Object} contactData - Данные контакта
- * @returns {Promise<Object>} - Новый контакт
- */
 export async function addContact(userId, contactData) {
   const contactWithUser = { ...contactData, userId };
+  console.log('Creating contact:', contactWithUser); // лог для отладки
   return Contact.create(contactWithUser);
 }
 
-/**
- * Получение контакта по ID с проверкой принадлежности пользователю
- *
- * @param {string} userId - ID пользователя
- * @param {string} contactId - ID контакта
- * @returns {Promise<Object|null>} - Найденный контакт или null
- */
 export async function getContactById(userId, contactId) {
+  if (!mongoose.isValidObjectId(contactId)) return null;
   return Contact.findOne({ _id: contactId, userId });
 }
 
-/**
- * Обновление контакта по ID с проверкой принадлежности пользователю
- *
- * @param {string} userId - ID пользователя
- * @param {string} contactId - ID контакта
- * @param {Object} updateData - Данные для обновления
- * @returns {Promise<Object|null>} - Обновлённый контакт или null
- */
 export async function updateContact(userId, contactId, updateData) {
+  if (!mongoose.isValidObjectId(contactId)) return null;
+
+  const allowedFields = [
+    'name',
+    'phoneNumber',
+    'email',
+    'contactType',
+    'isFavourite',
+    'photo',
+  ];
+
+  const filteredData = Object.fromEntries(
+    Object.entries(updateData).filter(([key]) => allowedFields.includes(key))
+  );
+
   return Contact.findOneAndUpdate(
     { _id: contactId, userId },
-    updateData,
+    filteredData,
     { new: true, runValidators: true }
   );
 }
 
-/**
- * Удаление контакта по ID с проверкой принадлежности пользователю
- *
- * @param {string} userId - ID пользователя
- * @param {string} contactId - ID контакта
- * @returns {Promise<Object|null>} - Удалённый контакт или null
- */
 export async function removeContactById(userId, contactId) {
+  if (!mongoose.isValidObjectId(contactId)) return null;
   return Contact.findOneAndDelete({ _id: contactId, userId });
 }
