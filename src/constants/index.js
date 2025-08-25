@@ -15,7 +15,7 @@ export const SMTP = {
   SMTP_FROM: process.env.SMTP_FROM,
 };
 
-export const TEMPLATES_DIR = path.join(__dirname, 'src', 'templates');
+export const TEMPLATES_DIR = path.join(ROOT_DIR, 'src', 'templates');
 
 export const CLOUDINARY = {
   CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
