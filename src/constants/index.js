@@ -1,19 +1,24 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export const SMTP = {
-  SMTP_HOST: 'SMTP_HOST',
-  SMTP_PORT: 'SMTP_PORT',
-  SMTP_USER: 'SMTP_USER',
-  SMTP_PASSWORD: 'SMTP_PASSWORD',
-  SMTP_FROM: 'SMTP_FROM',
+  SMTP_HOST: process.env.SMTP_HOST,
+  SMTP_PORT: process.env.SMTP_PORT,
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+  SMTP_FROM: process.env.SMTP_FROM,
 };
 
-export const TEMPLATES_DIR = path.join(process.cwd(), 'src', 'templates');
+export const TEMPLATES_DIR = path.join(__dirname, 'src', 'templates');
+
 export const CLOUDINARY = {
-  CLOUD_NAME: 'CLOUD_NAME',
-  API_KEY: 'API_KEY',
-  API_SECRET: 'API_SECRET',
+  CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+  API_KEY: process.env.CLOUDINARY_API_KEY,
+  API_SECRET: process.env.CLOUDINARY_API_SECRET,
 };
