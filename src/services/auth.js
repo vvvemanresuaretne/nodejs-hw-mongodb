@@ -10,6 +10,9 @@ import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import dotenv from 'dotenv';
+import { TEMPLATES_DIR } from '../constants/index.js'; // шлях залежить від вашої структури
+
+
 dotenv.config();
 
 const SALT_ROUNDS = 10;
