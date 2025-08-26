@@ -3,15 +3,13 @@ import createHttpError from 'http-errors';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Session from '../models/Session.js';
-import { SMTP } from '../constants/index.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { sendMail } from '../utils/sendMail.js';
 import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import dotenv from 'dotenv';
-import { TEMPLATES_DIR } from '../constants/index.js'; // шлях залежить від вашої структури
-
+import { TEMPLATES_DIR } from '../constants/index.js';
 
 dotenv.config();
 
@@ -38,7 +36,7 @@ export async function registerUser({ name, email, password }) {
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'your-access-token-secret';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'your-refresh-token-secret';
 
-const ACCESS_TOKEN_LIFETIME = 15 * 60;        // 15 хвилин
+const ACCESS_TOKEN_LIFETIME = 15 * 60;        // 15 хв
 const REFRESH_TOKEN_LIFETIME = 30 * 24 * 60 * 60;  // 30 днів
 
 export async function loginUser({ email, password }) {
@@ -138,11 +136,15 @@ export async function logoutUser({ refreshToken }) {
   await Session.deleteOne({ _id: session._id });
 }
 
+/**
+ * Відправка токена для скидання паролю
+ */
 export const requestResetToken = async (email) => {
   const user = await User.findOne({ email });
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
+
   const resetToken = jwt.sign(
     {
       sub: user._id,
@@ -170,7 +172,7 @@ export const requestResetToken = async (email) => {
   });
 
   await sendMail({
-    from: getEnvVar(SMTP.SMTP_FROM),
+    from: getEnvVar("SMTP_FROM"), // ✅ виправлено (було getEnvVar(SMTP.SMTP_FROM))
     to: email,
     subject: 'Reset your password',
     html,
