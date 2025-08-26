@@ -4,22 +4,28 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST, // smtp-relay.brevo.com
+  host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT) || 587,
-  secure: false, // false для порта 587 (STARTTLS)
+  secure: false, // для порта 587
   auth: {
-    user: process.env.SMTP_USER, // твой email от Brevo
-    pass: process.env.SMTP_PASSWORD, // SMTP ключ
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
   },
 });
 
 export async function sendMail({ to, subject, text, html }) {
+  console.log('SMTP_HOST:', process.env.SMTP_HOST);
+  console.log('SMTP_PORT:', process.env.SMTP_PORT);
+  console.log('SMTP_USER:', process.env.SMTP_USER);
+  console.log('SMTP_PASSWORD:', process.env.SMTP_PASSWORD ? '********' : undefined);
+  console.log('SMTP_FROM:', process.env.SMTP_FROM);
+
   const info = await transporter.sendMail({
-    from: process.env.SMTP_FROM, // от кого письмо
+    from: process.env.SMTP_FROM,
     to,
     subject,
-    text, // обычный текст письма
-    html, // HTML версия письма
+    text,
+    html,
   });
 
   console.log('Email sent:', info.messageId);
