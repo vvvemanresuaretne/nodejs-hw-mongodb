@@ -18,6 +18,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Экспортируем функцию sendMail через named export
 export async function sendMail({ to, subject, text, html }) {
   return transporter.sendMail({
     from: process.env.SMTP_FROM,
