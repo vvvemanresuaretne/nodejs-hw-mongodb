@@ -137,7 +137,7 @@ export async function logoutUser({ refreshToken }) {
 }
 
 /**
- * Відправка токена для скидання паролю
+ * Отправка токена для сброса пароля
  */
 export const requestResetToken = async (email) => {
   const user = await User.findOne({ email });
@@ -172,7 +172,7 @@ export const requestResetToken = async (email) => {
   });
 
   await sendMail({
-    from: getEnvVar("SMTP_FROM"), // ✅ виправлено (було getEnvVar(SMTP.SMTP_FROM))
+    from: getEnvVar("SMTP_FROM"),
     to: email,
     subject: 'Reset your password',
     html,
@@ -180,11 +180,16 @@ export const requestResetToken = async (email) => {
 };
 
 export const resetPassword = async (payload) => {
+  console.log('Received reset token:', payload.token);
+  console.log('JWT secret for verification:', getEnvVar('JWT_SECRET'));
+
   let entries;
 
   try {
     entries = jwt.verify(payload.token, getEnvVar('JWT_SECRET'));
+    console.log('Token successfully verified. Payload:', entries);
   } catch (err) {
+    console.error('JWT verify error:', err);
     if (err instanceof Error) throw createHttpError(401, err.message);
     throw err;
   }
@@ -204,4 +209,6 @@ export const resetPassword = async (payload) => {
     { _id: user._id },
     { password: encryptedPassword },
   );
+
+  console.log('Password has been successfully reset for user:', user.email);
 };
