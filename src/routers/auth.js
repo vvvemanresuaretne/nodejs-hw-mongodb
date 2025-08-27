@@ -40,7 +40,7 @@ router.post('/test', (req, res) => {
 
 // Сброс пароля по JWT-токену
 router.post(
-  '/reset-pwd',
+  '/reset-password',
   validateBody(resetPasswordSchema),
   ctrlWrapper(resetPasswordController) // логика с ТЗ будет внутри
 );
