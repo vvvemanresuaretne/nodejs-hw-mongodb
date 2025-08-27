@@ -19,6 +19,7 @@ export const resetPasswordController = async (req, res, next) => {
     try {
       payload = jwt.verify(token, process.env.JWT_RESET_PASSWORD_SECRET);
     } catch (err) {
+      console.error('Ошибка при проверке токена сброса пароля:', err);
       if (err.name === 'TokenExpiredError') {
         throw createHttpError(401, 'Reset token has expired.');
       }
@@ -36,7 +37,7 @@ export const resetPasswordController = async (req, res, next) => {
     user.password = hashedPassword;
     await user.save();
 
-    // Сбрасываем все сессии
+    // Сбрасываем все сессии пользователя
     await Session.deleteMany({ userId: user._id });
 
     return res.status(200).json({
