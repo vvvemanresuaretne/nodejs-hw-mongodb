@@ -17,7 +17,7 @@ console.log('SMTP_FROM:', process.env.SMTP_FROM);
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT) || 587,
-  secure: false, // Встановіть true, якщо використовуєте порт 465
+  secure: true, // Встановіть true, якщо використовуєте порт 465
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD,
