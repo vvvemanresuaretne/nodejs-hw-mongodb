@@ -17,7 +17,7 @@ export const resetPasswordController = async (req, res, next) => {
 
     let payload;
     try {
-      payload = jwt.verify(token, process.env.JWT_RESET_PASSWORD_SECRET);
+      payload = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
       console.error('Ошибка при проверке токена сброса пароля:', err);
       if (err.name === 'TokenExpiredError') {
