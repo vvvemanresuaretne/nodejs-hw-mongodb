@@ -20,7 +20,7 @@ export const getGoogleOAuthLink = () => {
   });
 };
 
-export const getAuthData = (code) => {
+export const getAuthData =async (code) => {
   try {
     const {tokens} = await client.getToken(code);
 
