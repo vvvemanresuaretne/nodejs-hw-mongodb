@@ -48,7 +48,7 @@ router.post(
 );
 
 router.post(
-  '/auth/get-google-oauth-url',
+  '/get-google-oauth-url',
   getGoogleOAuthSignInLinkController,);
 
 
