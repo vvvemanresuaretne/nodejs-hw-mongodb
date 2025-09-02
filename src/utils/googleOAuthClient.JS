@@ -1,5 +1,5 @@
 import { OAuth2Client } from 'google-auth-library';
-import { getEnvVar } from './getEnvVar';
+import { getEnvVar } from './getEnvVar.js';
 import { ENV_VARS_GOOGLE } from '../constants/index.js';
 
 const client = new OAuth2Client(
