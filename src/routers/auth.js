@@ -5,7 +5,7 @@ import {
   refreshController,
   logoutController,
   requestResetEmailController,
-  getGoogleOAuthSignInLinkController
+  getGoogleOAuthSignInLinkController,
 
 } from '../controllers/auth.js';
 import { validateBody } from '../utils/validateBody.js';
