@@ -47,7 +47,9 @@ router.post(
   ctrlWrapper(resetPasswordController) // логика с ТЗ будет внутри
 );
 
-router.post('/auth/get-google-oauth-url', getGoogleOAuthSignInLinkController,);
+router.post(
+  '/auth/get-google-oauth-url',
+  getGoogleOAuthSignInLinkController,);
 
 
 export default router;
