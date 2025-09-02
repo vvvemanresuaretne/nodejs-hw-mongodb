@@ -1,6 +1,6 @@
 import createHttpError from 'http-errors';
 import * as authService from '../services/auth.js';
-import { getGoogleOAuthLink } from '../utils/googleOAuthClient.js/index.js';
+import { getGoogleOAuthLink } from '../utils/googleOAuthClient.js';
 
 export async function registerController(req, res, next) {
   try {
