@@ -1,16 +1,26 @@
 import createHttpError from 'http-errors';
 import * as authService from '../services/auth.js';
 import { getGoogleOAuthLink } from '../utils/googleOAuthClient.js';
-import { date } from 'joi';
+import Joi from 'joi';
+
+const { date } = Joi;
+
+const registerSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+  name: Joi.string().min(2).required(),
+});
+
+const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});
 
 export async function registerController(req, res, next) {
   try {
+    await registerSchema.validateAsync(req.body);
+
     const { email, password, name } = req.body;
-
-    if (!email || !password || !name) {
-      throw createHttpError(400, 'Missing required fields: email, password or name');
-    }
-
     const newUser = await authService.registerUser({ email, password, name });
 
     res.status(201).json({
@@ -23,18 +33,18 @@ export async function registerController(req, res, next) {
       },
     });
   } catch (error) {
+    if (error.isJoi) {
+      return next(createHttpError(400, error.message));
+    }
     next(error);
   }
 }
 
 export async function loginController(req, res, next) {
   try {
+    await loginSchema.validateAsync(req.body);
+
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      throw createHttpError(400, 'Missing required fields: email or password');
-    }
-
     const { accessToken, refreshToken } = await authService.loginUser({ email, password }, {
       accessTokenExpiresIn: '15m',
       refreshTokenExpiresIn: '30d',
@@ -53,6 +63,9 @@ export async function loginController(req, res, next) {
       data: { accessToken },
     });
   } catch (error) {
+    if (error.isJoi) {
+      return next(createHttpError(400, error.message));
+    }
     next(error);
   }
 }
@@ -60,7 +73,6 @@ export async function loginController(req, res, next) {
 export async function refreshController(req, res, next) {
   try {
     const { refreshToken } = req.cookies;
-
     if (!refreshToken) {
       throw createHttpError(401, 'Refresh token not provided');
     }
@@ -87,7 +99,6 @@ export async function refreshController(req, res, next) {
 export async function logoutController(req, res, next) {
   try {
     const { refreshToken } = req.cookies;
-
     if (!refreshToken) {
       throw createHttpError(401, 'Refresh token not provided');
     }
@@ -132,8 +143,6 @@ export const resetPasswordController = async (req, res, next) => {
   }
 };
 
-
-
 export const getGoogleOAuthSignInLinkController = (req, res) => {
   const url = getGoogleOAuthLink();
   res.json({
@@ -143,16 +152,20 @@ export const getGoogleOAuthSignInLinkController = (req, res) => {
   });
 };
 
-export const verifyGoogleOAuthCodeController =async (req, res) => {
-  const session = await verifyGoogleOAuthCode(req.body.code);
+export const verifyGoogleOAuthCodeController = async (req, res, next) => {
+  try {
+    const session = await authService.verifyGoogleOAuthCode(req.body.code);
 
-    setupSession(sendResetPasswordEmail, res);
-  
-  res.json({
-    status: 200,
-    message: "Seccsessfully authoriszed with Google OAuth!",
-    data: {
-      accessToken: session.token,
-    }
-  })
-}
+    authService.setupSession(session, res);
+
+    res.json({
+      status: 200,
+      message: "Successfully authorized with Google OAuth!",
+      data: {
+        accessToken: session.token,
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
