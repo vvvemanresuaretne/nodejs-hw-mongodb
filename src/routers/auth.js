@@ -5,6 +5,8 @@ import {
   refreshController,
   logoutController,
   requestResetEmailController,
+  getGoogleOAuthSignInLinkController
+
 } from '../controllers/auth.js';
 import { validateBody } from '../utils/validateBody.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
@@ -44,5 +46,8 @@ router.post(
   validateBody(resetPasswordSchema),
   ctrlWrapper(resetPasswordController) // логика с ТЗ будет внутри
 );
+
+router.post('/auth/get-google-oauth-url', getGoogleOAuthSignInLinkController,);
+
 
 export default router;

@@ -129,3 +129,12 @@ export const resetPasswordController = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getGoogleOAuthSignInLinkController = (req, res) => {
+  const url = getGoogleOAuthSignInLink();
+  res.json({
+    status: 200,
+    message: 'Successfully receive Google OAuth url!',
+    data: { url },
+  })
+}
