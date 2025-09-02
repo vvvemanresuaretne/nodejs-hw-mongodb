@@ -6,13 +6,14 @@ import {
   logoutController,
   requestResetEmailController,
   getGoogleOAuthSignInLinkController,
+  verifyGoogleOAuthCodeController,
 
 } from '../controllers/auth.js';
 import { validateBody } from '../utils/validateBody.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { requestResetEmailSchema, resetPasswordSchema } from '../schemas/resetEmail.js';
 import { resetPasswordController } from '../controllers/resetPassword.js'; // вынесли в отдельный файл
-
+imort {verifyGoogleOAuthCodeValidationSchema} from '../schemas/verifyGoogleOAuthCode.js'
 const router = express.Router();
 
 // Регистрация нового пользователя
@@ -50,6 +51,11 @@ router.post(
 router.post(
   '/get-google-oauth-url',
   getGoogleOAuthSignInLinkController,);
+
+  router.post(
+    '/verify-google-oauth-code',
+    validateBody(verifyGoogleOAuthCodeValidationSchema),
+  verifyGoogleOAuthCodeController,);
 
 
 export default router;

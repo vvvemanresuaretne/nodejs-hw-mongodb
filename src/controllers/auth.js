@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors';
 import * as authService from '../services/auth.js';
 import { getGoogleOAuthLink } from '../utils/googleOAuthClient.js';
+import { date } from 'joi';
 
 export async function registerController(req, res, next) {
   try {
@@ -141,3 +142,17 @@ export const getGoogleOAuthSignInLinkController = (req, res) => {
     data: { url },
   });
 };
+
+export const verifyGoogleOAuthCodeController =async (req, res) => {
+  const session = await verifyGoogleOAuthCode(req.body.code);
+
+    setupSession(sendResetPasswordEmail, res);
+  
+  res.json({
+    status: 200,
+    message: "Seccsessfully authoriszed with Google OAuth!",
+    data: {
+      accessToken: session.token,
+    }
+  })
+}

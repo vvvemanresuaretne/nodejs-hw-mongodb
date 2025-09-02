@@ -10,6 +10,7 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import dotenv from 'dotenv';
 import { TEMPLATES_DIR } from '../constants/index.js';
+import { create } from 'node:domain';
 
 dotenv.config();
 
@@ -212,3 +213,21 @@ export const resetPassword = async (payload) => {
 
   console.log('Password has been successfully reset for user:', user.email);
 };
+
+export const verifyGoogleOAuthCode = async (code) => {
+  const AuthData = await getAuthData(code);
+  let user = await User.findOne({ email: authData.email });
+  if (!user) {
+    user = await User.create({
+      name: authData.name,
+      email: authData.email,
+      password: await bcrypt.hash(randomeBytes(30), 10),
+      avatarUrl: authData.picture
+
+    });
+  }
+  await Session.findOneAndDelete({ userId: user._id })
+  const session = await Session.create(createSession(user._id)
+  )
+  return session;
+ };
