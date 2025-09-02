@@ -1,17 +1,20 @@
 import { OAuth2Client } from 'google-auth-library';
 import { getEnvVar } from './getEnvVar';
-import { ENV_VARS_GOOGLE} from '../constants/index.js'
+import { ENV_VARS_GOOGLE } from '../constants/index.js';
 
-const client = new OAuth2Client({
-    projectId: getEnvVar(ENV_VARS.GOOGLE_OAUTH_PROJECT_ID),
-    clientId: getEnvVar(ENV_VARS.GOOGLE_OAUTH_CLIENT_ID),
-    client_secret: getEnvVar(ENV_VARS.GOOGLE_OAUTH_CLIENT_SECRET),
-    redirectUri: getEnvVar(ENV_VARS.GOOGLE_OAUTH_REDIRECT_URI),
-})
+const client = new OAuth2Client(
+  getEnvVar(ENV_VARS_GOOGLE.GOOGLE_OAUTH_CLIENT_ID),
+  getEnvVar(ENV_VARS_GOOGLE.GOOGLE_OAUTH_CLIENT_SECRET),
+  getEnvVar(ENV_VARS_GOOGLE.GOOGLE_OAUTH_REDIRECT_URI)
+);
 
-export const getGoogleOAuthLink = () => client.generateAuthUrl({
-    scope: ['https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/userinfo.profile',
+export const getGoogleOAuthLink = () => {
+  return client.generateAuthUrl({
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/userinfo.profile',
     ],
-    access_type: 'offline',
-});
+    access_type: 'offline', // Запрос на refresh token
+    prompt: 'consent' // Чтобы всегда показывать consent screen
+  });
+};
