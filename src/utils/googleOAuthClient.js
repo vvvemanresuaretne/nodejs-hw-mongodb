@@ -14,7 +14,7 @@ export const getGoogleOAuthLink = () => {
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/userinfo.profile',
     ],
-    access_type: 'offline', // Запрос на refresh token
-    prompt: 'consent' // Чтобы всегда показывать consent screen
+    access_type: 'offline',
+    prompt: 'consent',
   });
 };
