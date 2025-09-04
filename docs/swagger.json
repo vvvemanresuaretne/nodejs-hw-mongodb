@@ -27,7 +27,21 @@
       "description": "Auth operations."
     }
   ],
-  "paths": null,
+  "paths": {
+    "/students": {
+      "get": {
+        "$ref": "./paths/students/get.yaml"
+      },
+      "post": {
+        "$ref": "./paths/students/post.yaml"
+      }
+    },
+    "/students/{id}": {
+      "get": {
+        "$ref": "./paths/students/{studentId}/get.yaml"
+      }
+    }
+  },
   "components": {
     "securitySchemes": {
       "bearerAuth": {
