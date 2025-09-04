@@ -1,0 +1,40 @@
+tags:
+  - Auth
+summary: User login
+operationId: loginUser
+description: Authenticate user and get JWT token
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - username
+          - password
+        properties:
+          username:
+            type: string
+            example: user@example.com
+          password:
+            type: string
+            format: password
+            example: secret123
+responses:
+  '200':
+    description: Successful authentication
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - token
+          properties:
+            token:
+              type: string
+              description: JWT bearer token to use for authorized requests
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  '401':
+    description: Invalid username or password
+  '400':
+    description: Missing or invalid request parameters

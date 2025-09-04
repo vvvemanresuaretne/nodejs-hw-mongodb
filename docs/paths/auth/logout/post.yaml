@@ -1,0 +1,12 @@
+tags:
+  - Auth
+summary: User logout
+operationId: logoutUser
+description: Invalidate user session or token
+security:
+  - bearerAuth: []
+responses:
+  '204':
+    description: Successfully logged out
+  '401':
+    description: Unauthorized, token missing or invalid

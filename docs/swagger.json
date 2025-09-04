@@ -38,7 +38,7 @@
     },
     "/students/{id}": {
       "get": {
-        "$ref": "./paths/students/{studentId}/get.yaml"
+        "$ref": "./paths/students/{id}/get.yaml"
       }
     }
   },
