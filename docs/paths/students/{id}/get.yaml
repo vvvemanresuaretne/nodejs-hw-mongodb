@@ -6,8 +6,8 @@ description: 'Get student by id'
 security:
   - bearerAuth: []
 parameters:
-  - in: path
-    name: studentId
+  - name: id
+    in: path
     required: true
     schema:
       type: string
