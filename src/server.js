@@ -29,6 +29,7 @@ export function setupServer() {
   // Подключаем роутеры
   app.use('/auth', authRouter);
   app.use('/contacts', contactsRouter);
+  app.use('/api-docs', setupSwagger())
 
   // Обработка несуществующих маршрутов
   app.use(notFoundHandler);
