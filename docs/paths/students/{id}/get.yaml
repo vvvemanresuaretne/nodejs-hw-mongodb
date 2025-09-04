@@ -2,7 +2,7 @@ tags:
   - Students
 summary: Get student by id
 operationId: getStudent
-description: 'Get student by id'
+description: Get student by id
 security:
   - bearerAuth: []
 parameters:
@@ -11,10 +11,10 @@ parameters:
     required: true
     schema:
       type: string
-      example: '65ca67e7ae7f10c88b598384'
+      example: 65ca67e7ae7f10c88b598384
 responses:
   '200':
-    description: 'Get student by id'
+    description: Get student by id
     content:
       application/json:
         schema:
@@ -31,7 +31,6 @@ responses:
               type: string
               example: Successfully found student with id 65ca67e7ae7f10c88b598384!
             data:
-              type: object
-              $ref: '../../../components/schemas/student.yaml'
+              $ref: ../../../components/schemas/student.yaml
   '401':
-    $ref: '../../../components/responses/401.yaml'
+    $ref: ../../../components/responses/401.yaml

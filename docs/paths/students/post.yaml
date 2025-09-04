@@ -2,7 +2,7 @@ tags:
   - Students
 summary: Create student
 operationId: createStudent
-description: 'Create a student with payload'
+description: Create a student with payload
 security:
   - bearerAuth: []
 requestBody:
@@ -18,31 +18,31 @@ requestBody:
           - parentId
         properties:
           name:
-            description: "Student's name"
+            description: Student's name
             type: string
-            example: 'John Doe'
+            example: John Doe
           age:
-            description: "Student's age"
+            description: Student's age
             type: number
             example: 12
           gender:
-            description: "Student's age"
+            description: Student's gender
             type: string
-            enum: ['male', 'female', 'other']
+            enum: [male, female, other]
           avgMark:
-            description: "Student's average mark. Should be between 1 and 12"
+            description: Student's average mark. Should be between 1 and 12
             type: number
             example: 9.7
           onDuty:
-            description: 'Whether is student on duty'
+            description: Whether student is on duty
             type: boolean
             example: false
           parentId:
-            description: "Student's parent id"
+            description: Student's parent id
             type: string
             example: 65e4decdd286b30065d54af9
           photo:
-            description: "Student's photo"
+            description: Student's photo
             type: string
             format: binary
 responses:
@@ -64,7 +64,6 @@ responses:
               type: string
               example: Successfully created a student!
             data:
-              type: object
-              $ref: '../../components/schemas/student.yaml'
+              $ref: ../../components/schemas/student.yaml
   '401':
-    $ref: '../../components/responses/401.yaml'
+    $ref: ../../components/responses/401.yaml
