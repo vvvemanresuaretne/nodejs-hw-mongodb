@@ -5,15 +5,17 @@ import swaggerUi from 'swagger-ui-express';
 const pathToSwagger = path.join(process.cwd(), 'docs', 'swagger.json');
 
 export const setupSwagger = () => {
-    try {
-        const fileContent = fs.readFileSync('pathToSwagger');
-        const swaggerDoc = JSON.parse(fileContent.toString());
-        return [...swaggerUi.serve, swaggerUi.setup(swaggerDoc)];
-    } catch {
-        return (req, res) => res.status(500).json({
-            status: 500,
-            message: 'Internal Server Error',
-            errors: 'Faild to load swagger specs',
-        });
-    }
-}
+  try {
+    const fileContent = fs.readFileSync(pathToSwagger, 'utf-8');  // Передаём переменную, а не строку
+    const swaggerDoc = JSON.parse(fileContent);
+    return [swaggerUi.serve, swaggerUi.setup(swaggerDoc)];
+  } catch (err) {
+    console.error('Failed to load swagger specs:', err);
+    return (req, res) =>
+      res.status(500).json({
+        status: 500,
+        message: 'Internal Server Error',
+        errors: 'Failed to load swagger specs',
+      });
+  }
+};
