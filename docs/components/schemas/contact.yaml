@@ -1,41 +1,40 @@
 type: object
 required:
-  - _id
   - name
-  - age
-  - gender
-  - avgMark
-  - onDuty
+  - phoneNumber
+  - email
+  - contactType
 properties:
-  _id:
-    description: 'Contact id'
-    type: string
-    example: 65e4decdd286b30065d54af9
   name:
-    description: 'Contact name'
     type: string
-    example: 'John Doe'
-  age:
-    description: 'Contact age'
-    type: number
-    example: 12
-  gender:
-    description: 'Contact age'
+    example: Joker7
+  phoneNumber:
     type: string
-    enum: ['male', 'female', 'other']
-  avgMark:
-    description: 'Contact average mark. Should be between 1 and 12'
-    type: number
-    example: 9.7
-  onDuty:
-    description: 'Whether is contact on duty'
+    example: +380000000009
+  email:
+    type: string
+    example: joker@gmail.com
+  isFavourite:
     type: boolean
     example: false
-  parentId:
-    description: 'Contact parent id'
+  contactType:
     type: string
-    example: 65e4decdd286b30065d54af9
+    enum: [home, work, other]
+    example: home
+  userId:
+    type: string
+    example: 68ba87fc86797e30eaf5ceb3
   photo:
-    description: 'Link to contact photo'
     type: string
-    example: https://res.cloudinary.com/uqwgdu/image/upload/image.png
+    example: https://res.cloudinary.com/doa38x4nv/image/upload/v1757055019/golwidx9rpkkbsbzip.jpg
+  _id:
+    type: string
+    example: 68ba882b86797e30eaf5cec8
+  createdAt:
+    type: string
+    format: date-time
+    example: 2025-09-05T06:50:19.365Z
+  updatedAt:
+    type: string
+    format: date-time
+    example: 2025-09-05T06:50:19.365Z

@@ -12,57 +12,49 @@ requestBody:
         type: object
         required:
           - name
-          - age
-          - gender
-          - avgMark
-          - parentId
+          - phoneNumber
+          - email
+          - contactType
         properties:
           name:
-            description: Contacts name
+            description: Contact's name
             type: string
-            example: John Doe
-          age:
-            description: Contacts age
-            type: number
-            example: 12
-          gender:
-            description: Contacts gender
+            example: Joker7
+          phoneNumber:
+            description: Contact's phone number
             type: string
-            enum: [male, female, other]
-          avgMark:
-            description: Contacts average mark. Should be between 1 and 12
-            type: number
-            example: 9.7
-          onDuty:
-            description: Whether contact is on duty
+            example: +380000000009
+          email:
+            description: Contact's email
+            type: string
+            example: joker@gmail.com
+          isFavourite:
+            description: Whether the contact is favourite
             type: boolean
             example: false
-          parentId:
-            description: Contacts parent id
+          contactType:
+            description: Contact type
             type: string
-            example: 65e4decdd286b30065d54af9
+            enum: [home, work, other]
+            example: home
           photo:
-            description: Contacts photo
+            description: Contact's photo
             type: string
             format: binary
 responses:
   '201':
-    description: Creates a contact
+    description: Successfully created a contact
     content:
       application/json:
         schema:
           type: object
-          required:
-            - status
-            - message
-            - data
           properties:
             status:
               type: integer
               example: 201
             message:
               type: string
-              example: Successfully created a contact!
+              example: Successfully created a contact
             data:
               $ref: ../../components/schemas/contact.yaml
   '401':
