@@ -1,36 +1,63 @@
-tags:
-  - Contacts
-summary: Get contact by id
-operationId: getcontact
-description: Get contact by id
-security:
-  - bearerAuth: []
-parameters:
-  - name: id
-    in: path
-    required: true
-    schema:
-      type: string
-      example: 65ca67e7ae7f10c88b598384
-responses:
-  '200':
-    description: Get contact by id
-    content:
-      application/json:
-        schema:
-          type: object
-          required:
-            - status
-            - message
-            - data
-          properties:
-            status:
-              type: integer
-              example: 200
-            message:
-              type: string
-              example: Successfully found contact with id 65ca67e7ae7f10c88b598384!
-            data:
-              $ref: ../../../components/schemas/contact.yaml
-  '401':
-    $ref: ../../../components/responses/401.yaml
+Name	Description
+page
+integer
+(query)
+Example : 1
+
+1
+perPage
+integer
+(query)
+Example : 10
+
+10
+sortBy
+string
+(query)
+All contacts fields can be mentioned. Default value - _id
+
+Example : age
+
+age
+sortOrder
+string
+(query)
+Available values : asc, desc
+
+Example : asc
+
+
+asc
+minAvgMark
+number
+(query)
+Example : 4
+
+4
+maxAvgMark
+number
+(query)
+Example : 10
+
+10
+minAge
+number
+(query)
+Example : 10
+
+10
+maxAge
+number
+(query)
+Example : 16
+
+16
+gender
+string
+(query)
+Available values : male, female, other
+
+Example : male
+
+
+male
