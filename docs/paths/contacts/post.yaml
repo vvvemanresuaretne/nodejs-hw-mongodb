@@ -1,8 +1,8 @@
 tags:
-  - Students
-summary: Create student
-operationId: createStudent
-description: Create a student with payload
+  - Contacts
+summary: Create contact
+operationId: createContact
+description: Create a contact with payload
 security:
   - bearerAuth: []
 requestBody:
@@ -18,36 +18,36 @@ requestBody:
           - parentId
         properties:
           name:
-            description: Student's name
+            description: Contacts name
             type: string
             example: John Doe
           age:
-            description: Student's age
+            description: Contacts age
             type: number
             example: 12
           gender:
-            description: Student's gender
+            description: Contacts gender
             type: string
             enum: [male, female, other]
           avgMark:
-            description: Student's average mark. Should be between 1 and 12
+            description: Contacts average mark. Should be between 1 and 12
             type: number
             example: 9.7
           onDuty:
-            description: Whether student is on duty
+            description: Whether contact is on duty
             type: boolean
             example: false
           parentId:
-            description: Student's parent id
+            description: Contacts parent id
             type: string
             example: 65e4decdd286b30065d54af9
           photo:
-            description: Student's photo
+            description: Contacts photo
             type: string
             format: binary
 responses:
   '201':
-    description: Creates a student
+    description: Creates a contact
     content:
       application/json:
         schema:
@@ -62,8 +62,8 @@ responses:
               example: 201
             message:
               type: string
-              example: Successfully created a student!
+              example: Successfully created a contact!
             data:
-              $ref: ../../components/schemas/student.yaml
+              $ref: ../../components/schemas/contact.yaml
   '401':
     $ref: ../../components/responses/401.yaml

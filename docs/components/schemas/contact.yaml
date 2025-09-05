@@ -1,5 +1,3 @@
-# swagger/components/schemas/student.yaml
-
 type: object
 required:
   - _id
@@ -10,34 +8,34 @@ required:
   - onDuty
 properties:
   _id:
-    description: "Student's id"
+    description: 'Contact id'
     type: string
     example: 65e4decdd286b30065d54af9
   name:
-    description: "Student's name"
+    description: 'Contact name'
     type: string
     example: 'John Doe'
   age:
-    description: "Student's age"
+    description: 'Contact age'
     type: number
     example: 12
   gender:
-    description: "Student's age"
+    description: 'Contact age'
     type: string
     enum: ['male', 'female', 'other']
   avgMark:
-    description: "Student's average mark. Should be between 1 and 12"
+    description: 'Contact average mark. Should be between 1 and 12'
     type: number
     example: 9.7
   onDuty:
-    description: 'Whether is student on duty'
+    description: 'Whether is contact on duty'
     type: boolean
     example: false
   parentId:
-    description: "Student's parent id"
+    description: 'Contact parent id'
     type: string
     example: 65e4decdd286b30065d54af9
   photo:
-    description: "Link to student's photo"
+    description: 'Link to contact photo'
     type: string
     example: https://res.cloudinary.com/uqwgdu/image/upload/image.png

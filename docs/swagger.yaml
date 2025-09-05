@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: Students App
+  title: Contacts App
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -17,12 +17,12 @@ tags:
 paths:
   /students:
     get:
-      $ref: ./paths/students/get.yaml
+      $ref: ./paths/contacts/get.yaml
     post:
-      $ref: ./paths/students/post.yaml
+      $ref: ./paths/contacts/post.yaml
   /students/{id}:
     get:
-      $ref: ./paths/students/{id}/get.yaml
+      $ref: ./paths/contacts/{id}/get.yaml
   /auth/login:
     post:
       $ref: ./paths/auth/login/post.yaml
