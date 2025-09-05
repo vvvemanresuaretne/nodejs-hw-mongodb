@@ -1,7 +1,7 @@
 tags:
   - Contacts
 summary: Get list contacts
-operationId: getContactss
+operationId: getContacts
 description: Get list of users with this endpoint
 security:
   - bearerAuth: []
