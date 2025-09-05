@@ -1,0 +1,24 @@
+tags:
+  - Contacts
+summary: Delete contact by id
+operationId: deleteContact
+description: Удаляет контакт по заданному уникальному идентификатору
+security:
+  - bearerAuth: []
+parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+      example: 65ca67e7ae7f10c88b598384
+    description: Уникальный идентификатор контакта для удаления
+responses:
+  '204':
+    description: Контакт успешно удалён, тело ответа отсутствует
+  '404':
+    description: Контакт с указанным ID не найден
+  '400':
+    description: Некорректный запрос
+  '500':
+    description: Внутренняя ошибка сервера

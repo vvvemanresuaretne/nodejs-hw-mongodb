@@ -20,9 +20,12 @@ paths:
       $ref: ./paths/contacts/get.yaml
     post:
       $ref: ./paths/contacts/post.yaml
-  /contacts/{id}:
+  /contacts/{id}/patch:
     get:
-      $ref: ./paths/contacts/{id}/get.yaml
+      $ref: ./paths/contacts/{id}/patch.yaml
+  /contacts/{id}/delete:
+    get:
+      $ref: ./paths/contacts/{id}/delete.yaml
   /auth/login:
     post:
       $ref: ./paths/auth/login/post.yaml
