@@ -15,7 +15,7 @@ parameters:
     name: perPage
     schema:
       type: integer
-      example: 10
+    example: 10
   - in: query
     name: sortBy
     schema:
@@ -86,7 +86,31 @@ responses:
                 data:
                   type: array
                   items:
-                    $ref: ../../components/schemas/contact.yaml
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 66dea8b0de4be41c36276e7b
+                      name:
+                        type: string
+                        example: tty11
+                      phoneNumber:
+                        type: string
+                        example: '80231231212'
+                      isFavourite:
+                        type: boolean
+                        example: false
+                      contactType:
+                        type: string
+                        example: home
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: '2024-09-09T07:50:08.376Z'
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: '2024-09-09T07:50:08.376Z'
                 page:
                   type: number
                   example: 2
