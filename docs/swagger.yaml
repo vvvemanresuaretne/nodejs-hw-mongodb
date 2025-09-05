@@ -15,12 +15,12 @@ tags:
   - name: Auth
     description: Auth operations.
 paths:
-  /students:
+  /contacts:
     get:
       $ref: ./paths/contacts/get.yaml
     post:
       $ref: ./paths/contacts/post.yaml
-  /students/{id}:
+  /contacts/{id}:
     get:
       $ref: ./paths/contacts/{id}/get.yaml
   /auth/login:

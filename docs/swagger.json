@@ -28,7 +28,7 @@
     }
   ],
   "paths": {
-    "/students": {
+    "/contacts": {
       "get": {
         "$ref": "./paths/contacts/get.yaml"
       },
@@ -36,7 +36,7 @@
         "$ref": "./paths/contacts/post.yaml"
       }
     },
-    "/students/{id}": {
+    "/contacts/{id}": {
       "get": {
         "$ref": "./paths/contacts/{id}/get.yaml"
       }
