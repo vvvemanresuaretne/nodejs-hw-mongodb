@@ -7,17 +7,3 @@ extends:
 
 rules:
   no-unused-components: error
-
-theme:
-  openapi:
-    colors:
-      primary:
-        main: '#32329f'
-
-generateCodeSamples:
-  languages:
-    - lang: curl
-    - lang: Node.js
-    - lang: JavaScript
-
-htmlTemplate: ./docs/index.html
