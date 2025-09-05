@@ -1,5 +1,5 @@
 apis:
-  student@v1:
+  contact@v1:
     root: docs/openapi.yaml
 
 extends:
