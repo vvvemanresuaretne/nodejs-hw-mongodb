@@ -1,25 +1,40 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
+import cookieParser from 'cookie-parser';
 
-import { getContacts, getContact } from './controllers/contactsController.js';
+import contactsRouter from './routers/contacts.js';
+import authRouter from './routers/auth.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
 export function setupServer() {
   const app = express();
 
-  // Middleware
+  // ===== ЛОГИРУЕМ ВСЕ ВХОДЯЩИЕ ЗАПРОСЫ =====
+  app.use((req, res, next) => {
+    console.log(`--> ${req.method} ${req.originalUrl}`);
+    next();
+  });
+
+  // Подключаем middleware для CORS, логгирования, парсинга JSON и cookie
   app.use(cors());
   app.use(pino());
   app.use(express.json());
+  app.use(cookieParser());
 
-  // Роуты для contacts
-  app.get('/contacts', getContacts);
-  app.get('/contacts/:contactId', getContact); // ✅ новый роут
+  // Подключаем роутеры
+  app.use('/auth', authRouter);
+  app.use('/contacts', contactsRouter);
 
-  // Обробка неіснуючих роутів
-  app.use((req, res, next) => {
-    res.status(404).json({ message: 'Not found' });
-  });
+  // Обработка несуществующих маршрутов
+  app.use(notFoundHandler);
+
+  // Централизованный обработчик ошибок
+  app.use(errorHandler);
 
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
