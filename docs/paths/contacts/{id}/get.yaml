@@ -67,7 +67,7 @@ responses:
                   format: date-time
                   example: '2024-09-09T07:50:08.376Z'
   '401':
-    $ref: ../../components/responses/401.yaml
+    $ref: ../../../components/responses/401.yaml
   '404':
     description: Contact not found
     content:
