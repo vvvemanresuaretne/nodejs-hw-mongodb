@@ -10,7 +10,7 @@ servers:
   - url: http://localhost:3000
   - url: https://contactsapp-go5k.onrender.com
 tags:
-  - name: Students
+  - name: Contacts
     description: Operations about users.
   - name: Auth
     description: Auth operations.
