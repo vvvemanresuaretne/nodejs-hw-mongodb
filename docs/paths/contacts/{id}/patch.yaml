@@ -1,6 +1,6 @@
 tags:
   - Contacts
-summary: Partially update contact by id
+summary: Частичное обновление контакта с фото
 operationId: updateContact
 description: Обновление отдельных полей контакта по его уникальному идентификатору
 security:
@@ -14,10 +14,10 @@ parameters:
       type: string
       example: 65ca67e7ae7f10c88b598384
 requestBody:
-  description: Поля контакта для частичного обновления
+  description: Частичное обновление контакта с фото
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
         properties:
@@ -31,16 +31,20 @@ requestBody:
           phone:
             type: string
             description: Телефон контакта
-        example:
-          name: Иван Иванов
-          email: ivan@example.com
+          photo:
+            type: string
+            format: binary
+            description: Фото контакта
+      encoding:
+        photo:
+          contentType: image/jpeg, image/png
 responses:
   '200':
     description: Контакт успешно обновлен
     content:
       application/json:
         schema:
-          $ref: ../../../components/schemas/contact.yaml
+          $ref: '#/components/schemas/contact'
   '404':
     description: Контакт с указанным ID не найден
   '400':
