@@ -3,19 +3,15 @@
   "info": {
     "version": "1.0.0",
     "title": "Contacts App",
+    "description": "This is documentation of students app",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    },
-    "description": "This is documentation of students app"
+    }
   },
   "servers": [
-    {
-      "url": "http://localhost:3000"
-    },
-    {
-      "url": "https://contactsapp-go5k.onrender.com"
-    }
+    { "url": "http://localhost:3000" },
+    { "url": "https://contactsapp-go5k.onrender.com" }
   ],
   "tags": [
     {
@@ -30,15 +26,53 @@
   "paths": {
     "/contacts": {
       "get": {
-        "$ref": "./paths/contacts/get.yaml"
+        "tags": ["Contacts"],
+        "summary": "Get all contacts",
+        "responses": {
+          "200": {
+            "description": "Array of contact objects"
+          }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       },
       "post": {
-        "$ref": "./paths/contacts/post.yaml"
+        "tags": ["Contacts"],
+        "summary": "Create contact",
+        "responses": {
+          "201": {
+            "description": "Contact created"
+          }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     },
     "/contacts/{id}": {
       "get": {
-        "$ref": "./paths/contacts/{id}/get.yaml"
+        "tags": ["Contacts"],
+        "summary": "Get contact by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contact object"
+          },
+          "401": {
+            "description": "Authorization error"
+          }
+        },
+        "security": [
+          { "bearerAuth": [] }
+        ]
       }
     }
   },
@@ -46,8 +80,12 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
-  }
+  },
+  "security": [
+    { "bearerAuth": [] }
+  ]
 }
