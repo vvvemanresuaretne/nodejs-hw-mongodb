@@ -44,7 +44,7 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '#/components/schemas/contact'
+          $ref: ../../../components/schemas/contact.yaml
   '404':
     description: Контакт с указанным ID не найден
   '400':
