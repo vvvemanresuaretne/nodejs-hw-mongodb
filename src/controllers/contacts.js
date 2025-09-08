@@ -2,6 +2,7 @@ import createError from 'http-errors';
 import * as contactsService from '../services/contacts.js';
 import cloudinary from '../config/cloudinary.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js'; // додано для локального збереження
 
 const uploadFromBuffer = (buffer) =>
   new Promise((resolve, reject) => {
@@ -36,8 +37,12 @@ export const patchContact = async (req, res, next) => {
           return next(createError(500, 'Failed to upload image: ' + error.message));
         }
       } else {
-        // Подключи saveFileToUploadDir если нужна локальная загрузка
-        // photoUrl = await saveFileToUploadDir(req.file);
+        try {
+          photoUrl = await saveFileToUploadDir(req.file);
+          console.log('Image saved locally:', photoUrl);
+        } catch (error) {
+          return next(createError(500, 'Failed to save image locally: ' + error.message));
+        }
       }
     }
 
@@ -68,12 +73,21 @@ export async function addContact(req, res, next) {
     const contactData = { ...req.body };
 
     if (req.file && req.file.buffer) {
-      try {
-        const uploadResult = await uploadFromBuffer(req.file.buffer);
-        contactData.photo = uploadResult.secure_url;
-        console.log('Image uploaded to Cloudinary for new contact:', contactData.photo);
-      } catch (error) {
-        return next(createError(500, 'Failed to upload image: ' + error.message));
+      if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+        try {
+          const uploadResult = await uploadFromBuffer(req.file.buffer);
+          contactData.photo = uploadResult.secure_url;
+          console.log('Image uploaded to Cloudinary for new contact:', contactData.photo);
+        } catch (error) {
+          return next(createError(500, 'Failed to upload image: ' + error.message));
+        }
+      } else {
+        try {
+          contactData.photo = await saveFileToUploadDir(req.file);
+          console.log('Image saved locally for new contact:', contactData.photo);
+        } catch (error) {
+          return next(createError(500, 'Failed to save image locally: ' + error.message));
+        }
       }
     }
 
