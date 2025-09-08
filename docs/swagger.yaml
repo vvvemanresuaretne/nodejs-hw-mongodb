@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  version: "1.0.0"
+  version: 1.0.0
   title: Contacts App
   description: This is documentation of students app
   license:
@@ -23,8 +23,6 @@ paths:
       responses:
         '200':
           description: Array of contact objects
-        '401':
-          description: Unauthorized. Invalid or missing token
       security:
         - bearerAuth: []
     post:
@@ -34,17 +32,15 @@ paths:
       responses:
         '201':
           description: Contact created
-        '401':
-          description: Unauthorized. Invalid or missing token
       security:
         - bearerAuth: []
-  /contacts/{id}:
+  /contacts/{contactId}:
     get:
       tags:
         - Contacts
       summary: Get contact by ID
       parameters:
-        - name: id
+        - name: contactId
           in: path
           required: true
           schema:
@@ -53,9 +49,59 @@ paths:
         '200':
           description: Contact object
         '401':
-          description: Unauthorized. Invalid or missing token
-        '404':
-          description: Contact not found
+          description: Authorization error
+      security:
+        - bearerAuth: []
+    patch:
+      tags:
+        - Contacts
+      summary: Update contact by ID
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contact updated
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - Contacts
+      summary: Delete contact by ID
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Contact deleted
+      security:
+        - bearerAuth: []
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login user
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Unauthorized
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logout user
+      responses:
+        '204':
+          description: Logout successful
+        '401':
+          description: Unauthorized
       security:
         - bearerAuth: []
 components:
@@ -64,6 +110,5 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: Enter JWT token in format: Bearer {token}
 security:
   - bearerAuth: []
