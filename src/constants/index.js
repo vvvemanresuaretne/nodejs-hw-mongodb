@@ -13,6 +13,10 @@ const ROOT_DIR = path.resolve(__dirname, '..'); // Якщо config.js у src/con
 // Тепер визначаємо шлях до папки з шаблонами, відносно кореня проєкту
 export const TEMPLATES_DIR = path.join(ROOT_DIR, 'templates');
 
+// Шляхи для завантаження файлів
+export const TEMP_UPLOAD_DIR = path.join(ROOT_DIR, 'temp_upload');
+export const UPLOAD_DIR = path.join(ROOT_DIR, 'public', 'uploads');
+
 // Конфігурація SMTP
 export const SMTP = {
   SMTP_HOST: process.env.SMTP_HOST,
@@ -27,8 +31,6 @@ export const CLOUDINARY = {
   CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   API_KEY: process.env.CLOUDINARY_API_KEY,
   API_SECRET: process.env.CLOUDINARY_API_SECRET,
-
-  
 };
 
 export const ENV_VARS_GOOGLE = {
