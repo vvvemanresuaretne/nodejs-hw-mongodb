@@ -20,7 +20,7 @@ paths:
       $ref: ./paths/contacts/get.yaml
     post:
       $ref: ./paths/contacts/post.yaml
-  /contacts/{id}:
+  /contacts/{contactsId}:
     get:
       $ref: ./paths/contacts/{contactId}/get.yaml
     patch:
