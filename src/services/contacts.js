@@ -83,7 +83,12 @@ export async function updateContact(userId, contactId, updateData) {
   );
 }
 
+import mongoose from 'mongoose';
+import Contact from '../models/contact.js';
+
 export async function removeContactById(userId, contactId) {
   if (!mongoose.isValidObjectId(contactId)) return null;
-  return Contact.findOneAndDelete({ _id: contactId, userId });
+  return Contact.findOneAndDelete({ _id: contactId, owner: userId }); 
+  // замените owner на userId, если в вашей модели поле называется userId
 }
+
