@@ -6,7 +6,7 @@ description: Обновление отдельных полей контакта
 security:
   - bearerAuth: []
 parameters:
-  - name: id
+  - name: contactId
     in: path
     required: true
     description: Уникальный идентификатор контакта

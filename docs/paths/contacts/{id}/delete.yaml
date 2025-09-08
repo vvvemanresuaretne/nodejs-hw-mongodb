@@ -6,7 +6,7 @@ description: Удаляет контакт по заданному уникал�
 security:
   - bearerAuth: []
 parameters:
-  - name: id
+  - name: contactId
     in: path
     required: true
     schema:
