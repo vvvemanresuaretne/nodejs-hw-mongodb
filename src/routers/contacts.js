@@ -9,6 +9,7 @@ import { addContact, patchContact } from '../controllers/contacts.js';
 import { removeContactById } from '../services/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import upload from '../middlewares/upload.js'; // multer middleware для фото
+import * as contactsService from '../services/contacts.js';
 
 const router = express.Router();
 
