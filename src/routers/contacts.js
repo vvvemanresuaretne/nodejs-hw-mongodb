@@ -38,7 +38,21 @@ router.patch(
   ctrlWrapper(patchContact)
 );
 
-// Удалить контакт
-router.delete('/:contactId', isValidId, ctrlWrapper(removeContactById));
+router.delete('/:contactId', isValidId, async (req, res, next) => {
+  try {
+    console.log('Delete request ID:', req.params.contactId);
+    const deleted = await contactsService.removeContact(req.user.id, req.params.contactId);
+    if (!deleted) {
+      return res.status(404).json({ message: 'Contact not found' });
+    }
+    console.log('Contact deleted successfully');
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting contact:', error);
+    next(error);
+  }
+});
+
 
 export default router;
+
